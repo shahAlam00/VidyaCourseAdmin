@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, ShieldCheck, BarChart3, Users, Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../utils/axios.js";
-
+import Logo from "../assets/Logo.png"
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -65,10 +65,11 @@ const Login = () => {
 
         {/* Top Logo Section */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30">
-            <ShieldCheck size={26} />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-white shadow-lg shadow-indigo-500/30">
+          <img src={Logo} alt="" />
+            {/* <ShieldCheck size={26} /> */}
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">Digicampus</span>
+          <span className="text-xl font-bold tracking-tight text-white">VidyaUdbhav Academy</span>
         </div>
 
         {/* Middle Content Section */}
@@ -111,7 +112,7 @@ const Login = () => {
 
         {/* Bottom Footer Info */}
         <div className="relative z-10 flex items-center justify-between text-xs text-slate-500">
-          <span>&copy; {new Date().getFullYear()} Digicampus Inc. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} VidyaUdbhav Academy Inc. All rights reserved.</span>
           <span className="flex items-center gap-1.5 text-slate-400">
             <Layers size={14} /> Secure SSL Encrypted
           </span>
@@ -128,7 +129,7 @@ const Login = () => {
               <ShieldCheck size={28} />
             </div>
             <h2 className="text-2xl font-extrabold tracking-tight text-slate-900">Welcome Back</h2>
-            <p className="mt-2 text-sm text-slate-500">Sign in to your Digicampus admin profile.</p>
+            <p className="mt-2 text-sm text-slate-500">Sign in to your VidyaUdbhav Academy admin profile.</p>
           </div>
 
           {/* Error Alert Box */}
@@ -155,7 +156,7 @@ const Login = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder="admin@digicampus.com"
+                  placeholder="admin@vidyaudbhav.com"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3.5 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 transition-all focus:border-indigo-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-600/10"
                 />
               </div>
@@ -209,7 +210,7 @@ const Login = () => {
 
           {/* Footer Subtext */}
           <div className="mt-8 text-center text-xs text-slate-400">
-            Authorized administrators only. Secure portal powered by Digicampus.
+            Authorized administrators only. Secure portal powered by VidyaUdbhav Academy.
           </div>
 
         </div>
