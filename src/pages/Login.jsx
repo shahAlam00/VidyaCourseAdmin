@@ -58,7 +58,7 @@ const Login = () => {
       </div>
 
       {/* Left Side: Branding & Info Panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 z-10 border-r border-slate-800/60 shadow-[inset_-20px_0_40px_rgba(0,0,0,0.3)]">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative  overflow-hidden bg-[#1D5ED2] z-10 border-r border-slate-800/60 shadow-[inset_-20px_0_40px_rgba(0,0,0,0.3)]">
         {/* Background Decorative Glow */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -74,15 +74,15 @@ const Login = () => {
 
         {/* Middle Content Section */}
         <div className="relative z-10 max-w-lg my-auto py-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-6">
-            <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-white text-xs font-semibold uppercase tracking-wider mb-6">
+            <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
             Admin Portal v2.4
           </div>
           
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
             Manage your academy with absolute precision.
           </h1>
-          <p className="mt-4 text-base text-slate-400 leading-relaxed">
+          <p className="mt-4 text-base text-white leading-relaxed">
             Oversee real-time campus analytics, student enrollments, course structures, and system configurations securely from one centralized dashboard.
           </p>
 
@@ -94,7 +94,7 @@ const Login = () => {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-white">Live Analytics</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Track portal metrics instantly</p>
+                <p className="text-xs text-white mt-0.5">Track portal metrics instantly</p>
               </div>
             </div>
 
@@ -104,16 +104,16 @@ const Login = () => {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-white">User Control</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Manage roles & access levels</p>
+                <p className="text-xs text-white mt-0.5">Manage roles & access levels</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Footer Info */}
-        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500">
+        <div className="relative z-10 flex items-center justify-between text-xs text-white">
           <span>&copy; {new Date().getFullYear()} VidyaUdbhav Academy Inc. All rights reserved.</span>
-          <span className="flex items-center gap-1.5 text-slate-400">
+          <span className="flex items-center gap-1.5 text-white">
             <Layers size={14} /> Secure SSL Encrypted
           </span>
         </div>
@@ -129,7 +129,7 @@ const Login = () => {
               <ShieldCheck size={28} />
             </div>
             <h2 className="text-2xl font-extrabold tracking-tight text-slate-900">Welcome Back</h2>
-            <p className="mt-2 text-sm text-slate-500">Sign in to your VidyaUdbhav Academy admin profile.</p>
+            <p className="mt-2 text-sm text-white">Sign in to your VidyaUdbhav Academy admin profile.</p>
           </div>
 
           {/* Error Alert Box */}
@@ -147,7 +147,7 @@ const Login = () => {
                 Email Address
               </label>
               <div className="relative flex items-center">
-                <span className="absolute left-4 text-slate-400">
+                <span className="absolute left-4 text-white">
                   <Mail size={18} />
                 </span>
                 <input
@@ -209,7 +209,7 @@ const Login = () => {
           </form>
 
           {/* Footer Subtext */}
-          <div className="mt-8 text-center text-xs text-slate-400">
+          <div className="mt-8 text-center text-xs text-white">
             Authorized administrators only. Secure portal powered by VidyaUdbhav Academy.
           </div>
 
