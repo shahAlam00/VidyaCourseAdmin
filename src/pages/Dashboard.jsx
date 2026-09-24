@@ -8,42 +8,94 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      API.get("/courses/admin/stats").catch(() => ({ data: { data: {} } })),
-      API.get("/courses/all").catch(() => ({ data: { data: [] } })),
-    ])
-      .then(([statsRes, coursesRes]) => {
-        setStats(statsRes.data.data || statsRes.data);
-        const list = coursesRes.data.data || coursesRes.data.courses || [];
-        setCourses(Array.isArray(list) ? list : []);
-      })
-      .finally(() => setLoading(false));
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch courses and students in parallel (both public endpoints)
+        const [coursesRes, studentsRes] = await Promise.allSettled([
+          API.get("/courses/all"),
+          API.get("/auth/students"),
+        ]);
+
+        // Parse courses
+        const courseList =
+          coursesRes.status === "fulfilled"
+            ? coursesRes.value?.data?.data ||
+            coursesRes.value?.data?.courses ||
+            []
+            : [];
+        const safeCourses = Array.isArray(courseList) ? courseList : [];
+        setCourses(safeCourses);
+
+        // Parse students
+        const studentList =
+          studentsRes.status === "fulfilled"
+            ? studentsRes.value?.data?.data || []
+            : [];
+        const safeStudents = Array.isArray(studentList) ? studentList : [];
+
+        // Try the protected admin stats endpoint first
+        let adminStats = null;
+        try {
+          const statsRes = await API.get("/courses/admin/stats");
+          adminStats = statsRes.data?.data || statsRes.data || null;
+        } catch {
+          // Token missing or expired — derive stats from public data
+        }
+
+        if (adminStats && typeof adminStats.totalCourses === "number") {
+          // Use authoritative stats from backend
+          setStats(adminStats);
+        } else {
+          // Derive stats from course list + student list
+          const totalCourses = safeCourses.length;
+          const publishedCourses = safeCourses.filter(
+            (c) => c.status === "Published"
+          ).length;
+          const totalStudents = safeStudents.length;
+          const totalEnrollments = safeStudents.reduce(
+            (sum, s) => sum + (s.enrolledCourses || 0),
+            0
+          );
+          setStats({ totalCourses, publishedCourses, totalStudents, totalEnrollments });
+        }
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+        setStats({ totalCourses: 0, publishedCourses: 0, totalStudents: 0, totalEnrollments: 0 });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
+  const fmt = (val) =>
+    typeof val === "number" ? val.toLocaleString("en-IN") : "—";
+
   const statCards = [
-    { 
-      title: "Total Students", 
-      value: stats?.totalStudents ?? stats?.studentsCount ?? "0", 
+    {
+      title: "Total Students",
+      value: fmt(stats?.totalStudents),
       icon: Users,
-      color: "bg-blue-50 text-blue-600 border-blue-100" 
+      color: "bg-blue-50 text-blue-600 border-blue-100",
     },
-    { 
-      title: "Total Enrollments", 
-      value: stats?.totalEnrollments ?? stats?.enrollmentsCount ?? "0", 
+    {
+      title: "Total Enrollments",
+      value: fmt(stats?.totalEnrollments),
       icon: TrendingUp,
-      color: "bg-violet-50 text-violet-600 border-violet-100" 
+      color: "bg-violet-50 text-violet-600 border-violet-100",
     },
-    { 
-      title: "Total Courses", 
-      value: stats?.totalCourses ?? stats?.coursesCount ?? "0", 
+    {
+      title: "Total Courses",
+      value: fmt(stats?.totalCourses),
       icon: BookOpen,
-      color: "bg-amber-50 text-amber-600 border-amber-100" 
+      color: "bg-amber-50 text-amber-600 border-amber-100",
     },
-    { 
-      title: "Published Courses", 
-      value: stats?.publishedCourses ?? stats?.publishedCount ?? "0", 
+    {
+      title: "Published Courses",
+      value: fmt(stats?.publishedCourses),
       icon: Award,
-      color: "bg-emerald-50 text-emerald-600 border-emerald-100" 
+      color: "bg-emerald-50 text-emerald-600 border-emerald-100",
     },
   ];
 
@@ -62,8 +114,8 @@ const Dashboard = () => {
           {/* Stats Grid Skeleton */}
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {[1, 2, 3, 4].map((item) => (
-              <div 
-                key={item} 
+              <div
+                key={item}
                 className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
               >
                 <div className="flex items-center justify-between">
@@ -132,15 +184,15 @@ const Dashboard = () => {
             {statCards.map((stat) => {
               const Icon = stat.icon;
               return (
-                <div 
-                  key={stat.title} 
+                <div
+                  key={stat.title}
                   className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-slate-300"
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{stat.title}</p>
                       <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">
-                        {typeof stat.value === "number" ? stat.value.toLocaleString("en-IN") : stat.value}
+                        {stat.value}
                       </h2>
                     </div>
                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${stat.color} transition-transform group-hover:scale-110`}>
@@ -178,10 +230,10 @@ const Dashboard = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {course.thumbnail ? (
-                            <img 
-                              src={course.thumbnail} 
-                              alt={course.title} 
-                              className="h-10 w-16 rounded-lg object-cover border border-slate-100 flex-shrink-0" 
+                            <img
+                              src={course.thumbnail}
+                              alt={course.title}
+                              className="h-10 w-16 rounded-lg object-cover border border-slate-100 flex-shrink-0"
                             />
                           ) : (
                             <div className="h-10 w-16 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xs flex-shrink-0">
@@ -199,11 +251,10 @@ const Dashboard = () => {
                       </td>
                       <td className="px-6 py-4 text-slate-600 font-medium">{course.enrolledCount || 0}</td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-                          course.status === "Published" 
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
-                            : "bg-slate-100 text-slate-600 border border-slate-200"
-                        }`}>
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${course.status === "Published"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                          : "bg-slate-100 text-slate-600 border border-slate-200"
+                          }`}>
                           <span className={`h-1.5 w-1.5 rounded-full ${course.status === "Published" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
                           {course.status || "Draft"}
                         </span>
